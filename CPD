@@ -1,7 +1,74 @@
+#imports
 import json
+import random
+import os
 from pprint import pprint
 
-with open('magicCards.json') as data_file:
-	db = json.load(data_file)
+def main():
+	flagFIM = 0
+	print("iniciou o programa")
+	#ja existe database binaria?
+	try: 
+		with open('magicCards.bin','rb') as bindata:
+			binario = bindata.read();
+		print("achou o binario")
+	except:
+		#nao existe binario. criar novo
+		print("nao achou o binario")		
+		createJsonDb() #le o .json, ordena, tira redundancias
+		#createBinDb()
+	while flagFIM == 0:
+		flagFIM = printMenu() #printa menu ate que retorne 1
 
-pprint(db)
+#prints the menu and asks for a command
+def printMenu():
+	os.system('cls') #limpa a tela / clear screen
+	print( 'Welcome to the great Magic the Gathering DB' )
+	print( 'What are you looking for?' )
+	print('[0]exemplo \n[1]search name \n[2]procura por ID \n[3]Fechar')
+	c = int(input());
+	if c == 0:
+		#printa um exemplo de uma carta
+		printCardExample();
+		return 0 #main
+	elif c == 1:
+		#pesquisa uma carta pelo ['name']
+		print( 'And what is the name of the beauty?' )
+		name = input();
+		searchName(name);	#precisara ser modificada pq
+					#vai procurar direto no binario
+		return 0 #main
+	elif c == 2:
+		print('Insira o ID da carta')
+		ID = input()
+		#searchID(ID) funcao a ser criada
+		return 0 #main
+	elif c == 3:
+		# fim do while do main
+		return 1 #flagFIM = 1 
+	else:
+		print( 'please insert useful information' )
+	
+
+def createJsonDb():
+	global jsondb
+	with open( 'magicCards.json' ) as data:
+		jsondb = json.load( data );
+	if jsondb:
+		print('database .json carregado')
+	
+#search a card by name in the db and prints it
+def searchName( name ):
+	for i in range( 0, len( jsondb )):
+		if( jsondb[ i ]['name'].lower() == name.lower()):
+			pprint( jsondb[ i ] );
+			return
+
+def printCardExample():
+	#printa como exemplo uma carta de indice aleatorio
+	aCardIndex = random.randint( 0, len( jsondb ))
+	pprint( jsondb[ aCardIndex ] )
+
+#initFunctions
+main();
+print('print depois do main')
